@@ -146,9 +146,31 @@ class ArrayQuery
         return new self(array_intersect($this->stack, $other->stack));
     }
     
-    function join(self $inner, $outerSelector, $innerSelector, $selector)
+    function join(self $inner, $outerSelector, $innerSelector, $resultSelector)
     {
         $query = new self([]);
+        $outerCallback = $this->validate($outerSelector);
+        $innerCallback = $this->validate($innerSelector);
+        $resultCallback = $this->validate($resultSelector);
+        if ($resultCallback !== false)
+        {
+            foreach ($this->stack as $outerItem)
+            {
+                $outerKey = $outerCallback !== false ? call_user_func($outerCallback, $outerItem) : null;
+                foreach ($inner->stack as $innerItem)
+                {
+                    $innerKey = $innerCallback !== false ? call_user_func($innerCallback, $innerItem) : null;
+                    if ($outerKey !== null && $innerKey !== null && $outerKey === $innerKey)
+                    {
+                        $result = call_user_func($resultCallback, $outerItem, $innerItem);
+                        if (isset($result))
+                        {
+                            $query->stack[] = $result;
+                        }
+                    }
+                }
+            }
+        }
         
         return $query;
     }
@@ -318,10 +340,10 @@ class ArrayQuery
         else if (is_string($statement))
         {
             $segments = explode('=>', $statement);
-            if (count($segments) === 2)
+            if (count($segments) > 1)
             {
-                $arg = trim($segments[0]);
-                $body = trim($segments[1]);
+                $arg = trim(str_replace(['(', ')'], '', $segments[0]));
+                $body = trim(implode('=>', array_splice($segments, 1)));
                 try
                 {
                     eval('$callback = function (' . $arg . ') {return ' . $body . ';};');

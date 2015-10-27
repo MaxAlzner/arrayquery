@@ -57,10 +57,16 @@ echo PHP_EOL;
 
 echo 'join:' . PHP_EOL;
 echo array_query(['dog', 'rabbit', 'cat', 'fish'])->join(
-    array_query(['house', 'garage', 'yard']),
+    array_query([['name' => 'house', 'pet' => 'cat'], ['name' => 'shed', 'pet' => 'rabbit'], ['name' => 'yard', 'pet' => 'dog']]),
     '$str => $str',
-    '$str => $str',
-    '$str0, $str1 => [\'animal\' => $str0, \'area\' => $str1]') . PHP_EOL;
+    '$h => $h[\'pet\']',
+    function ($str, $h) { return ['animal' => $str, 'area' => $h['name']]; }) . PHP_EOL;
+echo array_query([['id' => 1, 'name' => 'John'], ['id' => 2, 'name' => 'Eric'], ['id' => 3, 'name' => 'Matt']])->join(
+    array_query([['id' => 1, 'type' => 'dog'], ['id' => 1, 'type' => 'fish'], ['id' => 3, 'type' => 'cat']]),
+    '$person => $person["id"]',
+    '$pet => $pet["id"]',
+    '($person, $pet) => ["name" => $person["name"], "pet" => $pet["type"]]'
+    ) . PHP_EOL;
 echo PHP_EOL;
 
 echo 'last:' . PHP_EOL;
