@@ -113,7 +113,6 @@ echo PHP_EOL;
 
 echo 'skip:' . PHP_EOL;
 echo array_query([1, 2, 1, 1, 3, 4, 3])->skip(3) . PHP_EOL;
-echo array_query([1, 2, 1, 1, 3, 4, 3])->skip(3, '$i => $i > 1') . PHP_EOL;
 echo PHP_EOL;
 
 echo 'sum:' . PHP_EOL;
@@ -124,7 +123,6 @@ echo PHP_EOL;
 
 echo 'take:' . PHP_EOL;
 echo array_query([1, 2, 1, 1, 3, 4, 3])->take(3) . PHP_EOL;
-echo array_query([1, 2, 1, 1, 3, 4, 3])->take(3, '$i => $i > 1') . PHP_EOL;
 echo PHP_EOL;
 
 echo 'where:' . PHP_EOL;
